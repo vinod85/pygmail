@@ -24,3 +24,10 @@ class PyGmail(object):
 		unreadCount = re.search("UNSEEN (\d+)", message[0]).group(1)
 		return unreadCount
 
+	def get_imap_quota(self):
+		quotaStr = self.M.getquotaroot("Inbox")[1][1][0]
+		r = re.compile('\d+').findall(quotaStr)
+		if r == []:
+		  r.append(0)
+		  r.append(0)
+		return float(r[1])/1024, float(r[0])/1024
