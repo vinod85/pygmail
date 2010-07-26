@@ -11,7 +11,7 @@ class PyGmail(object):
 		self.M = imaplib.IMAP4_SSL(self.IMAP_SERVER, self.IMAP_PORT)
 		status, message = self.M.login(username, password)
 
-	def get_mailbox_list(self):
+	def get_mailboxes(self):
 		status, folders = self.M.list()
 		return folders
 
@@ -31,3 +31,14 @@ class PyGmail(object):
 		  r.append(0)
 		  r.append(0)
 		return float(r[1])/1024, float(r[0])/1024
+
+	def get_mails_from(self, uid, folder='Inbox'):
+		status, count = self.M.select(folder, readonly=1)
+		status, response = self.M.search(None, 'FROM', uid)
+		email_ids = [e_id for e_id in response[0].split()]
+		return email_ids
+
+	def get_mail_from_id(self, id):
+		status, response = self.M.fetch(id, '(body[header.fields (subject)])')
+		return response
+
